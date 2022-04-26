@@ -115,20 +115,38 @@ circle{
 }
 
 .sliders{
-  display: none;
+  /* display: none; */
   z-index: 101;
   position:fixed;
   bottom:0;
   left:0;
-  width: 300px;
+  width: 100%;
+  padding: .5rem;
 
 }
+
 .slider{
   width:100%;
-
+  display:flex;
+  align-items:center;
 }
-.slider p {
-  color: red;
+
+
+#hide{
+  cursor: pointer;
+}
+
+.close{
+  padding-left: 12px;
+}
+
+#size{
+  display: none;
+}
+
+label {
+  display: none;
+  font-size: 1rem;
 }
 
 input{
@@ -185,6 +203,10 @@ input{
     margin-left: auto;
     padding-left: 15px;
     padding-right: 15px;
+  }
+
+  .sliders{
+    max-width: 300px;
   }
 
   .hero-text{

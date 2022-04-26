@@ -12,6 +12,8 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
 
 var toggle, canvas, sizeSlider, spacingSlider;
 
+var hideButton;
+
 var gridRows, gridColumns;
 
 var radius, gap, size;
@@ -28,8 +30,10 @@ function init() {
 
   sizeSlider = document.getElementById("size");
   spacingSlider = document.getElementById("spacing");
+  hideButton = document.getElementById("hide");
 
   size = dotRadius();
+  sizeSlider.value = size;
   setDotRadius(size);
 
   isPortrait = window.matchMedia("(orientation: portrait)").matches;
@@ -69,6 +73,26 @@ toggle.onclick = function () {
 window.addEventListener("resize", () => {
   init();
   setGrid();
+});
+
+sizeSlider.addEventListener("input", (event) => {
+  sizeChange();
+});
+
+hideButton.addEventListener("click", (event) => {
+  var sizeLabel = document.getElementById("size-label");
+  var sliders = document.getElementById("sliders");
+  if (sizeSlider.style.display === "none") {
+    sizeSlider.style.display = "flex";
+    sizeLabel.style.display = "flex";
+    hideButton.innerHTML = "Hide";
+    // sliders.style.backgroundColor = "#f2f2f2";
+  } else {
+    sliders.style.backgroundColor = "transparent";
+    sizeSlider.style.display = "none";
+    sizeLabel.style.display = "none";
+    hideButton.innerHTML = "Change Size";
+  }
 });
 
 function dotRadius() {
@@ -112,6 +136,7 @@ function setDotRadius(size) {
 }
 
 function sizeChange() {
+  size = sizeSlider.value;
   var dots = document.querySelectorAll("[id=dot]");
   var circles = document.querySelectorAll("[id=circle]");
   for (i = 0; i < dots.length; i++) {
@@ -143,7 +168,7 @@ function setGrid() {
 
 function draw() {
   document.getElementById("size-value").innerHTML = sizeSlider.value;
-  document.getElementById("spacing-value").innerHTML = spacing.value;
+  // document.getElementById("spacing-value").innerHTML = spacing.value;
 
   var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 

@@ -9,24 +9,36 @@
   <body>
     <div class="wip">WIP</div>
     <div class="dots-wrapper"><div id="dots"></div></div>
-    <div class="sliders">
+    <div class="sliders" id="sliders">
       <div class="slider">
-        <p>Radius: <span id="size-value"></span></p>
+        <label for="size" id="size-label"
+          >Radius: <span id="size-value"></span
+        ></label>
 
-        <input type="range" min="24" max="200" value="81" id="size" />
+        <input
+          type="range"
+          min="24"
+          max="200"
+          value="81"
+          id="size"
+          name="size"
+          style="display: none"
+        />
+        <div class="hide" id="hide">Change Size</div>
       </div>
-      <div class="slider">
+
+      <!-- <div class="slider">
         <p>Spacing: <span id="spacing-value"></span></p>
 
         <input type="range" min="12" max="200" value="64" id="spacing" />
-      </div>
+      </div> -->
     </div>
 
     <header>
       <div class="container-logo">
         <div class="row">
           <div class="col-md-12">
-            <a href="/BE-Link" id="logo">
+            <a href="/" id="logo">
               <img src="/BE-Link/BE_logo.svg" alt="Benjamin Edgar" />
             </a>
           </div>
