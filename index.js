@@ -38,12 +38,17 @@ function init() {
 }
 
 function isPortrait() {
-  return screenOrientation == 0 || screenOrientation == 180;
+  return (
+    window.orientation == 0 ||
+    window.orientation == 180 ||
+    screen.orientation == "portrait-secondary" ||
+    screen.orientation == "portrait-primary"
+  );
 }
 
 function setSizes() {
   setDotRadius(dotRadius());
-  screenOrientation = window.orientation;
+  console.log("isPortrait", isPortrait());
   if (window.innerWidth <= 600 || isPortrait()) {
     colRatio = divideIntoNSpaces(window.innerWidth, 3, dotRatio);
     rowRatio = divideIntoNSpaces(window.innerHeight, 5, dotRatio);
