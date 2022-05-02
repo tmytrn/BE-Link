@@ -42,7 +42,8 @@ function isPortrait() {
     window.orientation == 0 ||
     window.orientation == 180 ||
     screen.orientation == "portrait-secondary" ||
-    screen.orientation == "portrait-primary"
+    screen.orientation == "portrait-primary" ||
+    screen.availWidth < screen.availHeight
   );
 }
 
