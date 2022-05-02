@@ -3,6 +3,15 @@
   src: url(//cdn.shopify.com/s/files/1/0666/1997/t/5/assets/9516ef74-4fe9-45fe-a09f-493cb9518f71.woff2?v=2410939882692835546) format("woff2"), url(//cdn.shopify.com/s/files/1/0666/1997/t/5/assets/5b99bc59-1b2e-446b-961e-2e1dbdfcd641.woff?v=1048718411034538580) format("woff");
 }
 
+:root{
+  --gridRows: auto;
+  --gridCols: auto;
+  --rowSpace: 0px;
+  --colSpace: 0px;
+  --gridPadding: 0px;
+  --gridGap: 0px;
+}
+
 *{
   box-sizing: border-box;
 }
@@ -98,20 +107,25 @@ img{
   height: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
   pointer-events: none;
 }
 
 #dots{ 
+  gap: var(--gridGap);
+  grid-template-columns: var(--gridCols);
+  grid-template-rows: var(--gridRows);
+  padding: var(--gridPadding);
   position: fixed;
   top: 0;
   left: 0;
   display: grid;
-  justify-content: space-between;
   z-index: 100;
 }
 
-circle{
-  margin: 0 auto;
+.dot{
+  width: 100%;
+  height:100%;
 }
 
 .sliders{
@@ -172,9 +186,9 @@ input{
   width: 100%;
   float: left;
   position: relative;
-    min-height: 1px;
-    padding-left: 15px;
-    padding-right: 15px;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 @media (min-width: 480px){

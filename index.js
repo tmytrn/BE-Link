@@ -1,14 +1,4 @@
-Element.prototype.remove = function () {
-  this.parentElement.removeChild(this);
-};
-
-NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
-  for (var i = this.length - 1; i >= 0; i--) {
-    if (this[i] && this[i].parentElement) {
-      this[i].parentElement.removeChild(this[i]);
-    }
-  }
-};
+var r;
 
 var toggle, canvas, sizeSlider, spacingSlider;
 
@@ -18,49 +8,62 @@ var gridRows, gridColumns;
 
 var radius, gap, size;
 
+var colRatio, rowRatio, colSpaceRatio;
+
 var isPortrait;
 
-var prevSize;
+var throttled = false;
+var delay = 100;
+
+var dotWidthRatio = 0.5;
+var dotHeightRatio = 0.5;
+var dotWidthGapRatio = 1 - dotWidthRatio;
+var dotHeightGapRatio = 1 - dotHeightRatio;
+
+init();
+setSizes();
+draw();
 
 function init() {
   toggle = document.getElementById("toggle-dots");
   canvas = document.getElementById("dots");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  sizeSlider = document.getElementById("size");
-  spacingSlider = document.getElementById("spacing");
-  hideButton = document.getElementById("hide");
-
-  size = dotRadius();
-  sizeSlider.value = size;
-  setDotRadius(size);
-
   isPortrait = window.matchMedia("(orientation: portrait)").matches;
-
-  if (window.innerWidth <= 600 || isPortrait) {
-    //mobile breakpoint
-    radius = window.innerWidth / 6;
-    gap = window.innerHeight / 10;
-
-    gridRows = `${gap * 2}px ${gap * 2}px ${gap * 2}px ${gap * 2}px ${
-      gap * 2
-    }px `;
-
-    gridColumns = `${radius * 2}px ${radius * 2}px ${radius * 2}px `;
-  } else {
-    radius = window.innerWidth / 10;
-    gap = window.innerHeight / 6;
-
-    gridRows = `${gap * 2}px ${gap * 2}px ${gap * 2}px  `;
-    gridColumns = `${radius * 2}px ${radius * 2}px ${radius * 2}px ${
-      radius * 2
-    }px ${radius * 2}px `;
-  }
+  r = document.querySelector(":root");
 }
 
-init();
-draw();
+function setSizes() {
+  size = dotRadius();
+  setDotRadius(size);
+  if (window.innerWidth <= 600 || isPortrait) {
+    colRatio = divideIntoNSpaces(window.innerWidth, 3, dotWidthRatio);
+    rowRatio = divideIntoNSpaces(window.innerHeight, 5, dotHeightRatio);
+    colSpaceRatio = divideIntoNSpaces(window.innerWidth, 4, dotWidthGapRatio);
+    rowSpaceRatio = divideIntoNSpaces(window.innerHeight, 6, dotHeightGapRatio);
+
+    gridRows = `${rowRatio}px ${rowRatio}px ${rowRatio}px ${rowRatio}px ${rowRatio}px`;
+    gridColumns = `${colRatio}px ${colRatio}px ${colRatio}px`;
+  } else {
+    colRatio = divideIntoNSpaces(window.innerWidth, 5, dotWidthRatio);
+    rowRatio = divideIntoNSpaces(window.innerHeight, 3, dotHeightRatio);
+    colSpaceRatio = divideIntoNSpaces(window.innerWidth, 6, dotWidthGapRatio);
+    rowSpaceRatio = divideIntoNSpaces(window.innerHeight, 4, dotHeightGapRatio);
+    gridRows = `${rowRatio}px ${rowRatio}px ${rowRatio}px  `;
+    gridColumns = `${colRatio}px ${colRatio}px ${colRatio}px ${colRatio}px ${colRatio}px `;
+  }
+
+  r.style.setProperty(
+    "--gridPadding",
+    `${rowSpaceRatio}px ${colSpaceRatio}px `
+  );
+  r.style.setProperty("--gridGap", `${rowSpaceRatio}px ${colSpaceRatio}px`);
+  r.style.setProperty("--gridRows", gridRows);
+  r.style.setProperty("--gridCols", gridColumns);
+}
+
+function divideIntoNSpaces(length, spaces, ratio) {
+  var value = length * ratio;
+  return value / spaces;
+}
 
 toggle.onclick = function () {
   if (dots.style.display === "none") {
@@ -71,105 +74,32 @@ toggle.onclick = function () {
 };
 
 window.addEventListener("resize", () => {
-  init();
-  setGrid();
-});
-
-sizeSlider.addEventListener("input", (event) => {
-  sizeChange();
-});
-
-hideButton.addEventListener("click", (event) => {
-  var sizeLabel = document.getElementById("size-label");
-  var sliders = document.getElementById("sliders");
-  if (sizeSlider.style.display === "none") {
-    sizeSlider.style.display = "flex";
-    sizeLabel.style.display = "flex";
-    hideButton.innerHTML = "Hide";
-    // sliders.style.backgroundColor = "#f2f2f2";
-  } else {
-    sliders.style.backgroundColor = "transparent";
-    sizeSlider.style.display = "none";
-    sizeLabel.style.display = "none";
-    hideButton.innerHTML = "Change Size";
+  if (!throttled) {
+    //actual callback action
+    setSizes();
+    // we're throttled!
+    throttled = true;
+    // set a timeout to un-throttle
+    setTimeout(function () {
+      throttled = false;
+    }, delay);
   }
 });
 
 function dotRadius() {
-  var index;
-
-  var sizes = [28, 36, 48, 64, 81, 128];
-
-  if (window.innerWidth <= 380) {
-    index = 0;
-  } else if (window.innerWidth > 300 && window.innerWidth <= 600) {
-    index = 1;
-  } else if (window.innerWidth > 600 && window.innerWidth <= 1023) {
-    index = 2;
-  } else if (window.innerWidth > 1023 && window.innerWidth <= 1270) {
-    index = 3;
-  } else if (window.innerWidth > 1270 && window.innerWidth <= 1920) {
-    index = 4;
-  } else if (window.innerWidth > 1920 && window.innerWidth <= 2560) {
-    index = 4;
-  } else if (window.innerWidth > 2560) {
-    index = 5;
-  }
-
-  return sizes[index];
+  var widthRatio = divideIntoNSpaces(window.innerWidth, 5, dotWidthRatio);
+  var heightRatio = divideIntoNSpaces(window.innerHeight, 3, dotHeightRatio);
+  return Math.min(widthRatio, heightRatio) / 2;
 }
 
 function setDotRadius(size) {
-  var dots = document.querySelectorAll("[id=dot]");
-  for (i = 0; i < dots.length; i++) {
-    dots[i].setAttribute("width", size * 2);
-    dots[i].setAttribute("height", size * 2);
-    dots[i].innerHTML =
-      "<circle cx=" +
-      "50%" +
-      " cy=" +
-      "50%" +
-      " r= " +
-      size +
-      " fill=#000 id=circle />";
-  }
-}
-
-function sizeChange() {
-  size = sizeSlider.value;
-  var dots = document.querySelectorAll("[id=dot]");
-  var circles = document.querySelectorAll("[id=circle]");
-  for (i = 0; i < dots.length; i++) {
-    dots[i].setAttribute("width", size * 2);
-    dots[i].setAttribute("height", size * 2);
-    circles[i].setAttribute("cx", size);
-    circles[i].setAttribute("cy", size);
+  var circles = document.querySelectorAll("[class=circle]");
+  for (i = 0; i < circles.length; i++) {
     circles[i].setAttribute("r", size);
   }
-  canvas.style.gridTemplateRows = gridRows;
-
-  canvas.style.gridTemplateColumns = gridColumns;
-
-  document.getElementById("size-value").innerHTML = size;
-}
-
-function spaceChange() {
-  canvas.style.padding = `${gap}px`;
-
-  canvas.style.columnGap = `${gap}px`;
-  canvas.style.rowGap = `${gap}px`;
-  document.getElementById("spacing-value").innerHTML = gap;
-}
-
-function setGrid() {
-  canvas.style.gridTemplateColumns = gridColumns;
-  canvas.style.gridTemplateRows = gridRows;
 }
 
 function draw() {
-  document.getElementById("size-value").innerHTML = sizeSlider.value;
-  // document.getElementById("spacing-value").innerHTML = spacing.value;
-
   var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
   svg.innerHTML =
@@ -179,19 +109,15 @@ function draw() {
     "50%" +
     " r= " +
     size +
-    " fill=#000 id=circle />";
+    " fill=#000 class=circle />";
 
-  svg.setAttribute("width", size * 2);
-  svg.setAttribute("height", size * 2);
-  svg.id = "dot";
+  svg.classList.add("dot");
 
   for (i = 0; i < 15; i++) {
     var clone = svg.cloneNode(true);
     clone.style.placeSelf = "center";
     document.getElementById("dots").appendChild(clone);
   }
-
-  setGrid();
 
   return null;
 }
