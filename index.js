@@ -13,7 +13,7 @@ var colRatio, rowRatio, colSpaceRatio;
 var isPortrait;
 
 var throttled = false;
-var delay = 250;
+var delay = 80;
 
 var dotWidthRatio = 0.5;
 var dotHeightRatio = 0.5;
