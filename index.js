@@ -50,7 +50,7 @@ function isPortrait() {
 function setSizes() {
   setDotRadius(dotRadius());
   console.log("isPortrait", isPortrait());
-  if (window.availWidth <= 600 || isPortrait()) {
+  if (window.innerWidth <= 600 || isPortrait()) {
     colRatio = divideIntoNSpaces(window.innerWidth, 3, dotRatio);
     rowRatio = divideIntoNSpaces(window.innerHeight, 5, dotRatio);
     colSpaceRatio = divideIntoNSpaces(window.innerWidth, 4, dotSpaceRatio);
@@ -124,7 +124,7 @@ window.addEventListener("resize", () => {
 // });
 
 function dotRadius() {
-  if (window.availWidth <= 600) {
+  if (window.innerWidth <= 600) {
     var widthRatio = divideIntoNSpaces(window.innerWidth, 3, dotRatio);
     var heightRatio = divideIntoNSpaces(window.innerHeight, 5, dotRatio);
   } else {
