@@ -10,7 +10,7 @@ var radius, gap, size;
 
 var colRatio, rowRatio, colSpaceRatio;
 
-var isPortrait;
+var screenOrientation;
 
 var throttled = false;
 
@@ -33,14 +33,18 @@ draw();
 function init() {
   toggle = document.getElementById("toggle-dots");
   canvas = document.getElementById("dots");
-  isPortrait = window.matchMedia("(orientation: portrait)").matches;
+  screenOrientation = window.orientation;
   r = document.querySelector(":root");
+}
+
+function isPortrait() {
+  return screenOrientation == 0 || screenOrientation == 180;
 }
 
 function setSizes() {
   setDotRadius(dotRadius());
-  if (window.innerWidth <= 600) {
-    console.log("row of 3s, width: ", window.innerWidth, isPortrait);
+  screenOrientation = window.orientation;
+  if (window.innerWidth <= 600 || isPortrait()) {
     colRatio = divideIntoNSpaces(window.innerWidth, 3, dotRatio);
     rowRatio = divideIntoNSpaces(window.innerHeight, 5, dotRatio);
     colSpaceRatio = divideIntoNSpaces(window.innerWidth, 4, dotSpaceRatio);
@@ -80,14 +84,16 @@ function divideIntoNSpaces(length, spaces, ratio) {
 // };
 
 window.addEventListener("resize", () => {
-  if (isMobileDevice) {
-    if (window.innerWidth != initialWidth) {
-      setSizes();
-    }
-    return;
-  }
   if (!throttled) {
     //actual callback action
+    if (isMobileDevice) {
+      //dont move when adressbar stuff moves
+      if (window.innerWidth != initialWidth) {
+        setSizes();
+        initialWidth = window.innerWidth;
+      }
+      return;
+    }
 
     setSizes();
     // we're throttled!
@@ -102,16 +108,17 @@ window.addEventListener("resize", () => {
 
 // window.addEventListener("orientationchange", function () {
 //   // Announce the new orientation number
-//   isPortrait = window.matchMedia("(orientation: portrait)").matches;
-//   console.log(
-//     "isPortrait: ",
-//     window.matchMedia("(orientation: portrait)").matches
-//   );
-//   // setSizes();
+//   console.log("orientation change");
+//   // isPortrait = window.matchMedia("(orientation: portrait)").matches;
+//   // console.log(
+//   //   "isPortrait: ",
+//   //   window.matchMedia("(orientation: portrait)").matches
+//   // );
+//   setSizes();
 // });
 
 function dotRadius() {
-  if (window.innerWidth <= 600 || isPortrait) {
+  if (window.innerWidth <= 600) {
     var widthRatio = divideIntoNSpaces(window.innerWidth, 3, dotRatio);
     var heightRatio = divideIntoNSpaces(window.innerHeight, 5, dotRatio);
   } else {
