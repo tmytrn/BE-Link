@@ -14,12 +14,14 @@ var screenOrientation;
 
 var throttled = false;
 
-var delay = 20;
+var delay = 50;
 
-var dotRatio = 0.5;
-var dotSpaceRatio = 1 - dotRatio;
+var dotRatio;
+var dotSpaceRatio;
 
-var initialWidth = window.innerWidth;
+var initialWidth, width, height;
+
+var colSpaceMargins, rowSpaceMargins, colSpaceBetween, rowSpaceBetween;
 
 var isMobileDevice =
   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -35,6 +37,8 @@ function init() {
   canvas = document.getElementById("dots");
   screenOrientation = window.orientation;
   r = document.querySelector(":root");
+  updateWindowDimensions();
+  initialWidth = width;
 }
 
 function isPortrait() {
@@ -46,31 +50,56 @@ function isPortrait() {
   );
 }
 
+function updateWindowDimensions() {
+  width = window.innerWidth;
+  if (isMobileDevice) {
+    height = screen.height - 64;
+  } else {
+    height = window.innerHeight;
+  }
+}
+
 function setSizes() {
   setDotRadius(dotRadius());
-  console.log("isPortrait", isPortrait());
-  if (window.innerWidth <= 600 || isPortrait()) {
-    colRatio = divideIntoNSpaces(window.innerWidth, 3, dotRatio);
-    rowRatio = divideIntoNSpaces(window.innerHeight, 5, dotRatio);
-    colSpaceRatio = divideIntoNSpaces(window.innerWidth, 4, dotSpaceRatio);
-    rowSpaceRatio = divideIntoNSpaces(window.innerHeight, 6, dotSpaceRatio);
+  // console.log("isPortrait", isPortrait());
+  if (width <= 600 || isPortrait()) {
+    colRatio = divideIntoNSpaces(width, 3, dotRatio);
+    rowRatio = divideIntoNSpaces(height, 5, dotRatio);
+    colSpaceRatio = divideIntoNSpaces(width, 4, dotSpaceRatio);
+    rowSpaceRatio = divideIntoNSpaces(height, 6, dotSpaceRatio);
+
+    colSpaceMargins = divideIntoNSpaces(colSpaceRatio * 4, 2, 0.25);
+    colSpaceBetween = divideIntoNSpaces(colSpaceRatio * 4, 2, 0.75);
+
+    rowSpaceMargins = divideIntoNSpaces(rowSpaceRatio, 2, 1);
+    rowSpaceBetween = divideIntoNSpaces(rowSpaceRatio * 5, 4, 1);
 
     gridRows = `${rowRatio}px ${rowRatio}px ${rowRatio}px ${rowRatio}px ${rowRatio}px`;
     gridColumns = `${colRatio}px ${colRatio}px ${colRatio}px`;
   } else {
-    colRatio = divideIntoNSpaces(window.innerWidth, 5, dotRatio);
-    rowRatio = divideIntoNSpaces(window.innerHeight, 3, dotRatio);
-    colSpaceRatio = divideIntoNSpaces(window.innerWidth, 6, dotSpaceRatio);
-    rowSpaceRatio = divideIntoNSpaces(window.innerHeight, 4, dotSpaceRatio);
+    colRatio = divideIntoNSpaces(width, 5, dotRatio);
+    rowRatio = divideIntoNSpaces(height, 3, dotRatio);
+    colSpaceRatio = divideIntoNSpaces(width, 6, dotSpaceRatio);
+    rowSpaceRatio = divideIntoNSpaces(height, 4, dotSpaceRatio);
+
+    colSpaceMargins = divideIntoNSpaces(colSpaceRatio, 2, 1);
+    colSpaceBetween = divideIntoNSpaces(colSpaceRatio * 5, 4, 1);
+    rowSpaceMargins = divideIntoNSpaces(rowSpaceRatio * 4, 2, 0.25);
+    rowSpaceBetween = divideIntoNSpaces(rowSpaceRatio * 4, 2, 0.75);
+
+    // console.log("rowSpace: ", colSpaceRatio * 6);
+    // console.log("rowSpaceMargin: ", colSpaceMargins * 2);
+    // console.log("rowSpaceBetween", colSpaceBetween * 4);
+
     gridRows = `${rowRatio}px ${rowRatio}px ${rowRatio}px  `;
     gridColumns = `${colRatio}px ${colRatio}px ${colRatio}px ${colRatio}px ${colRatio}px `;
   }
 
   r.style.setProperty(
     "--gridPadding",
-    `${rowSpaceRatio}px ${colSpaceRatio}px `
+    `${rowSpaceMargins}px ${colSpaceMargins}px `
   );
-  r.style.setProperty("--gridGap", `${rowSpaceRatio}px ${colSpaceRatio}px`);
+  r.style.setProperty("--gridGap", `${rowSpaceBetween}px ${colSpaceBetween}px`);
   r.style.setProperty("--gridRows", gridRows);
   r.style.setProperty("--gridCols", gridColumns);
 }
@@ -93,12 +122,13 @@ window.addEventListener("resize", () => {
     //actual callback action
     if (isMobileDevice) {
       //dont move when address bar stuff moves
-      if (window.innerWidth != initialWidth) {
+      if (width != initialWidth) {
         setSizes();
-        initialWidth = window.innerWidth;
+        initialWidth = width;
       }
       return;
     }
+    updateWindowDimensions();
 
     setSizes();
     // we're throttled!
@@ -123,12 +153,16 @@ window.addEventListener("resize", () => {
 // });
 
 function dotRadius() {
-  if (window.innerWidth <= 600) {
-    var widthRatio = divideIntoNSpaces(window.innerWidth, 3, dotRatio);
-    var heightRatio = divideIntoNSpaces(window.innerHeight, 5, dotRatio);
+  if (width <= 600) {
+    dotRatio = 0.5;
+    dotSpaceRatio = 1 - dotRatio;
+    var widthRatio = divideIntoNSpaces(width, 3, dotRatio);
+    var heightRatio = divideIntoNSpaces(height, 5, dotRatio);
   } else {
-    var widthRatio = divideIntoNSpaces(window.innerWidth, 5, dotRatio);
-    var heightRatio = divideIntoNSpaces(window.innerHeight, 3, dotRatio);
+    dotRatio = 0.6;
+    dotSpaceRatio = 1 - dotRatio;
+    var widthRatio = divideIntoNSpaces(width, 5, dotRatio);
+    var heightRatio = divideIntoNSpaces(height, 3, dotRatio);
   }
 
   var value = Math.min(Math.min(widthRatio, heightRatio));
