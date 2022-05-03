@@ -80,13 +80,13 @@ function divideIntoNSpaces(length, spaces, ratio) {
   return (value / spaces).toFixed();
 }
 
-// toggle.onclick = function () {
-//   if (dots.style.display === "none") {
-//     dots.style.display = "grid";
-//   } else {
-//     dots.style.display = "none";
-//   }
-// };
+toggle.onclick = function () {
+  if (dots.style.display === "none") {
+    dots.style.display = "grid";
+  } else {
+    dots.style.display = "none";
+  }
+};
 
 window.addEventListener("resize", () => {
   if (!throttled) {
