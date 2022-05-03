@@ -42,8 +42,7 @@ function isPortrait() {
     window.orientation == 0 ||
     window.orientation == 180 ||
     screen.orientation == "portrait-secondary" ||
-    screen.orientation == "portrait-primary" ||
-    screen.availWidth < screen.availHeight
+    screen.orientation == "portrait-primary"
   );
 }
 
@@ -93,7 +92,7 @@ window.addEventListener("resize", () => {
   if (!throttled) {
     //actual callback action
     if (isMobileDevice) {
-      //dont move when adressbar stuff moves
+      //dont move when address bar stuff moves
       if (window.innerWidth != initialWidth) {
         setSizes();
         initialWidth = window.innerWidth;
