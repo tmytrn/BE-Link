@@ -14,7 +14,7 @@ var screenOrientation;
 
 var throttled = false;
 
-var delay = 50;
+var delay = 20;
 
 var dotRatio = 0.5;
 var dotSpaceRatio = 1 - dotRatio;
