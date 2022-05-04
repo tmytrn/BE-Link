@@ -1,4 +1,4 @@
-@import url("http://fast.fonts.net/t/1.css?apiType=css&projectid=654846f5-8579-4a33-99db-35ba1d3a00f4"); @font-face {
+@font-face {
   font-family: "Helvetica Neue LT W05_57 Cond";
   src: url(//cdn.shopify.com/s/files/1/0666/1997/t/5/assets/9516ef74-4fe9-45fe-a09f-493cb9518f71.woff2?v=2410939882692835546) format("woff2"), url(//cdn.shopify.com/s/files/1/0666/1997/t/5/assets/5b99bc59-1b2e-446b-961e-2e1dbdfcd641.woff?v=1048718411034538580) format("woff");
 }
@@ -10,6 +10,7 @@
   --colSpace: 0px;
   --gridPadding: 0px;
   --gridGap: 0px;
+  --app-height: 100%;
 }
 
 *{
@@ -24,11 +25,10 @@ html{
 body {
     font: 16px/1.2 "Helvetica Neue LT W05_57 Cond", "Helvetica", sans-serif;
     color: #1c1919;
-    margin: 0;
     padding-bottom: 100px;
     text-align: center;
-
 }
+
 
 .main{
   position: relative;
