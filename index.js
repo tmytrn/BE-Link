@@ -131,7 +131,7 @@ function dotRadius() {
       dotRatio = 0.6;
     } else {
       //iPhone & iPhone mini
-      dotRatio = 0.45;
+      dotRatio = 0.55;
     }
     dotSpaceRatio = 1 - dotRatio;
     var widthRatio = divideIntoNSpaces(width, 3, dotRatio);
