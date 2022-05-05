@@ -1,16 +1,13 @@
 var r;
 
-var toggle, canvas, sizeSlider, spacingSlider;
+var toggle, canvas;
 
 var hideButton;
 
-var gridRows, gridColumns;
 var currGridRows, currGridCols;
 var prevGridRows, prevGridCols;
 
-var radius, gap, size;
-
-var colRatio, rowRatio;
+var size;
 
 var currColRatio, currRowRatio;
 var prevColRatio, prevRowRatio;
@@ -29,14 +26,10 @@ var currGridPadding, prevGridPadding;
 
 var screenOrientation;
 
-var throttled = false;
-
-var delay = 500;
-
 var dotRatio;
 var dotSpaceRatio;
 
-var initialWidth, width, height;
+var width, height;
 
 var initialSize = dotRadius();
 
@@ -62,7 +55,6 @@ function init() {
   setPrevValues();
   initAnimations();
   setInitialState();
-  initialWidth = width;
 }
 
 function initAnimations() {
@@ -100,12 +92,7 @@ function isPortrait() {
 
 function updateWindowDimensions() {
   width = window.innerWidth;
-  // if (isMobileDevice) {
-  //   height = screen.height - 64;
-  // } else {
   height = window.innerHeight;
-  // console.log("height: ", height);
-  // }
 }
 
 function divideIntoNSpaces(length, spaces, ratio) {
@@ -124,25 +111,6 @@ toggle.onclick = function () {
 window.addEventListener("resize", () => {
   clearTimeout(doit);
   doit = setTimeout(updateScreen, 500);
-  // if (!throttled) {
-  //   //actual callback action
-  //   // if (isMobileDevice) {
-  //   //   //dont move when address bar stuff moves
-  //   //   if (width != initialWidth) {
-  //   //     setSizes();
-  //   //     initialWidth = width;
-  //   //   }
-  //   //   return;
-  //   // }
-
-  //   // we're throttled!
-  //   throttled = true;
-  //   // set a timeout to un-throttle
-
-  //   setTimeout(function () {
-  //     throttled = false;
-  //   }, delay);
-  // }
 });
 
 function updateScreen() {
@@ -153,20 +121,19 @@ function updateScreen() {
   sizeAnim.restart();
 }
 
-// window.addEventListener("orientationchange", function () {
-//   // Announce the new orientation number
-//   console.log("orientation change");
-//   // isPortrait = window.matchMedia("(orientation: portrait)").matches;
-//   // console.log(
-//   //   "isPortrait: ",
-//   //   window.matchMedia("(orientation: portrait)").matches
-//   // );
-//   setSizes();
-// });
-
 function dotRadius() {
-  if (width <= 600) {
-    dotRatio = 0.6;
+  if (width < height) {
+    console.log("width: ", width);
+    if (width > 450) {
+      //iPad Portrait mode
+      dotRatio = 0.7;
+    } else if (width > 400) {
+      //IPhone Pro Max Portrait mode
+      dotRatio = 0.6;
+    } else {
+      //iPhone & iPhone mini
+      dotRatio = 0.45;
+    }
     dotSpaceRatio = 1 - dotRatio;
     var widthRatio = divideIntoNSpaces(width, 3, dotRatio);
     var heightRatio = divideIntoNSpaces(height, 5, dotRatio);
@@ -184,10 +151,6 @@ function dotRadius() {
 
 function setDotRadius() {
   currDotRadius = dotRadius() - 1;
-  // var circles = document.querySelectorAll("[class=anim]");
-  // for (i = 0; i < circles.length; i++) {
-  //   circles[i].setAttribute("value", size - 1);
-  // }
 }
 
 function draw() {
@@ -200,7 +163,7 @@ function draw() {
     "50%" +
     " r=" +
     (dotRadius() - 1) +
-    " fill=#000 class=circle/>";
+    " fill=#1c1919 class=circle/>";
 
   svg.classList.add("dot");
 
@@ -211,16 +174,9 @@ function draw() {
     clone.style.placeSelf = "center";
     document.getElementById("dots").appendChild(clone);
   }
-
-  return null;
 }
 
-//aniamte dot size
-
 function setPrevValues() {
-  // console.log("setPrevValues()");
-  // console.log("prevDotRadius: ", prevDotRadius);
-  // console.log("prevGridPadding: ", prevGridPadding);
   prevColRatio = currColRatio;
   prevRowRatio = currRowRatio;
   prevColSpaceRatio = currColSpaceRatio;
@@ -236,8 +192,6 @@ function setPrevValues() {
 }
 
 function setInitialState() {
-  // sizeAnim.seek(500);
-  // spacingAnim.seek(500);
   r.style.setProperty(
     "--gridPadding",
     `${currRowSpaceMargins}px ${currColSpaceMargins}px `
@@ -251,9 +205,8 @@ function setInitialState() {
 }
 
 function setSizes() {
-  // console.log("isPortrait", isPortrait());
-  setDotRadius(dotRadius());
-  if (width <= 600 || isPortrait()) {
+  setDotRadius();
+  if (width <= height) {
     currColRatio = divideIntoNSpaces(width, 3, dotRatio);
     currRowRatio = divideIntoNSpaces(height, 5, dotRatio);
 
