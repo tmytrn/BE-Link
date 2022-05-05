@@ -123,7 +123,6 @@ function updateScreen() {
 
 function dotRadius() {
   if (width < height) {
-    console.log("width: ", width);
     if (width > 450) {
       //iPad Portrait mode
       dotRatio = 0.7;
