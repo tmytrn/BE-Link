@@ -103,11 +103,17 @@ function divideIntoNSpaces(length, spaces, ratio) {
 }
 
 toggle.onclick = function () {
-  if (dots.style.display === "none") {
-    dots.style.display = "grid";
+  var scrollPosition = window.scrollY;
+
+  if (dots.style.visibility === "hidden") {
+    dots.style.visibility = "visible";
   } else {
-    dots.style.display = "none";
+    dots.style.visibility = "hidden";
   }
+
+  setTimeout(() => {
+    window.scroll(0, scrollPosition);
+  }, 1);
 };
 
 window.addEventListener("resize", () => {
@@ -134,40 +140,24 @@ function updateScreen() {
 
 function dotRadius() {
   var widthRatio, heightRatio, value;
-  //desktop
   if (width > height) {
+    //desktop
     dotRatio = 0.6;
-    dotSpaceRatio = 1 - dotRatio;
-    widthRatio = divideIntoNSpaces(width, dotsPerRow, dotRatio);
-    heightRatio = divideIntoNSpaces(height, dotsPerCol, dotRatio);
-    value = Math.min(Math.min(widthRatio, heightRatio));
-    return (value / 2).toFixed();
-  }
-
-  //tablet/mobile
-  if (width > 450) {
+  } else if (width > 450) {
     //iPad Portrait mode
     dotRatio = 0.55;
-    dotSpaceRatio = 1 - dotRatio;
-    widthRatio = divideIntoNSpaces(width, dotsPerRow, dotRatio);
-    heightRatio = divideIntoNSpaces(height, dotsPerCol, dotRatio);
-    value = Math.min(Math.min(widthRatio, heightRatio));
-    console.log("iPad");
-    return (value / 2).toFixed();
   } else if (width > 400) {
     //IPhone Pro Max Portrait mode
     dotRatio = 0.6;
-    dotSpaceRatio = 1 - dotRatio;
   } else {
     //iPhone & iPhone mini
     dotRatio = 0.55;
-    dotSpaceRatio = 1 - dotRatio;
   }
 
+  dotSpaceRatio = 1 - dotRatio;
   widthRatio = divideIntoNSpaces(width, dotsPerRow, dotRatio);
   heightRatio = divideIntoNSpaces(height, dotsPerCol, dotRatio);
   value = Math.min(Math.min(widthRatio, heightRatio));
-
   return (value / 2).toFixed();
 }
 
